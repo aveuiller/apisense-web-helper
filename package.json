@@ -1,0 +1,27 @@
+{
+  "name": "apisense-web-visualization",
+  "homepage": "https://apisense.io/",
+  "version": "0.1.0",
+  "description": "This project is a library to provide web charts using an API simiar API to the APISENSE-Visualization module",
+  "main": "library.js",
+  "scripts": {
+    "test": "karma start --browsers=PhantomJS",
+    "test-web": "karma start --browsers=Chrome",
+    "start": "node random/test.js"
+  },
+  "author": "",
+  "license": "",
+  "devDependencies": {
+    "browserify": "^14.3.0",
+    "jasmine": "^2.6.0",
+    "karma": "^1.7.0",
+    "karma-browserify": "^5.1.1",
+    "karma-chrome-launcher": "^2.1.1",
+    "karma-jasmine": "^1.1.0",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "phantomjs": "^2.1.7",
+    "watchify": "^3.9.0"
+  },
+  "dependencies": {
+  }
+}
