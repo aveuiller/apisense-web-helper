@@ -5,7 +5,7 @@ module.exports = function(config) {
     config.set({
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
-        basePath: '',
+        basePath: '.',
 
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
@@ -13,7 +13,7 @@ module.exports = function(config) {
 
         // list of files / patterns to load in the browser
         files: [
-            'spec/**/*[sS]pec.js'
+            'test/**/*[sS]pec.js'
         ],
 
         // list of files to exclude
@@ -22,11 +22,12 @@ module.exports = function(config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'spec/**/*[sS]pec.js': ['browserify']
+            'test/**/*[sS]pec.js': ['browserify']
         },
 
         browserify: {
-            debug: true
+            debug: true,
+            paths: ['src/']
         },
 
         // test results reporter to use
