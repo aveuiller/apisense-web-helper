@@ -3,6 +3,7 @@
 module.exports = (function() {
 
     var $ = require('jquery');
+    $ = typeof($) === 'function' ? $ : window.jQuery;
 
     function Crop(id, options) {
         this.id = id;
