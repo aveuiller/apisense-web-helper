@@ -50,9 +50,9 @@ describe("Crop:", function() {
             jasmine.Ajax.uninstall();
         });
 
-        it("getCropRecords: returns a list of records", function(done) {
+        it("getRecords: returns a list of records", function(done) {
             //Request records
-            this.crop.getCropRecords().then(function(data) {
+            this.crop.getRecords().then(function(data) {
                 expect(data).toEqual(records);
                 done();
             });

@@ -24,7 +24,7 @@ describe("Visualization:", function() {
         describe("Add", function() {
             beforeEach(function() {
                 jasmine.Ajax.install();
-                jasmine.Ajax.stubRequest(crop.getCropDataUrl()).andReturn(mockDataResponse);
+                jasmine.Ajax.stubRequest(crop.getDataUrl()).andReturn(mockDataResponse);
                 spyOn(Vis, '_newChart').and.callFake(function(ctx, config) {
                     return "new Chart";
                 });

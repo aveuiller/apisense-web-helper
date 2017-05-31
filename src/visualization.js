@@ -44,8 +44,17 @@ module.exports = (function() {
                 borderWidth: 1
             };
 
-            options.data = dataset.data;
+            options.data = dataset.data.sort(sortByX);
             options.label = dataset.id;
+
+            if (dataset.id in _labels) {
+                options.label = _labels[dataset.id];
+            }
+
+            if (dataset.id in _colors) {
+                options.backgroundColor = getRGBAColor(_colors[dataset.id], 0.2);
+                options.borderColor = getRGBAColor(_colors[dataset.id], 1);
+            }
 
             datasets.push(options);
         }
@@ -56,6 +65,21 @@ module.exports = (function() {
                 datasets: datasets
             }
         };
+
+        if ('xAxis' in _labels) {
+            if (_labels.xAxis == 'DATE_FORMAT') {
+                Object.assign(ret, {
+                    options: {
+                        scales: {
+                            xAxes: [{
+                                type: 'time',
+                                position: 'bottom'
+                            }]
+                        }
+                    }
+                });
+            }
+        }
 
         return ret;
     };
@@ -106,7 +130,7 @@ module.exports = (function() {
 
     var getChartPromise = function(type, ctx, crop, title, initCallback) {
         return new Promise((resolve, reject) => {
-            crop.getCropRecords().then(function(cropData) {
+            crop.getRecords().then(function(cropData) {
                 var wrapper = ChartWrapper();
                 initCallback(wrapper, cropData);
                 var config = getChartConfig(type, wrapper.getData(), wrapper.getColors(), wrapper.getLabels());
