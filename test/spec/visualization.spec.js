@@ -1,5 +1,4 @@
 require('jasmine-ajax');
-var $ = require("jquery");
 var Crop = require("crop.js");
 
 describe("Visualization:", function() {
@@ -11,7 +10,7 @@ describe("Visualization:", function() {
 
     describe("Create chart:", function() {
         var crop = new Crop("test", {});
-        var ctx = $('<canvas></canvas>');
+        var ctx = '<canvas></canvas>';
         var title = "test";
         var initCallback = function(chart, data) {};
 
@@ -26,6 +25,9 @@ describe("Visualization:", function() {
             beforeEach(function() {
                 jasmine.Ajax.install();
                 jasmine.Ajax.stubRequest(crop.getCropDataUrl()).andReturn(mockDataResponse);
+                spyOn(Vis, '_newChart').and.callFake(function(ctx, config) {
+                    return "new Chart";
+                });
             });
 
             afterEach(function() {
@@ -36,7 +38,7 @@ describe("Visualization:", function() {
                 var promise = Vis.addLineChart(ctx, crop, title, initCallback);
                 expect(promise).toBeDefined();
                 promise.then(function(chart) {
-                    expect(chart).toBeDefined();
+                    expect(Vis._newChart).toHaveBeenCalled();
                     done();
                 });
             });

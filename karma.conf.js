@@ -13,6 +13,7 @@ module.exports = function(config) {
 
         // list of files / patterns to load in the browser
         files: [
+            'node_modules/babel-polyfill/dist/polyfill.js',
             'test/**/*[sS]pec.js'
         ],
 
@@ -27,6 +28,7 @@ module.exports = function(config) {
 
         browserify: {
             debug: true,
+            transform: [['babelify', { "presets": ["es2015"] }]],
             paths: ['src/']
         },
 
