@@ -11,6 +11,8 @@ module.exports = (function() {
 
     var visMod = {};
 
+    let Validator = require('validator.js');
+
     var sortByX = function(a, b) {
         return a.x - b.x;
     };
@@ -39,13 +41,12 @@ module.exports = (function() {
             var dataset = _datasets[i];
 
             var options = {
+                data: dataset.data.sort(sortByX),
+                label: dataset.id,
                 backgroundColor: getRGBAColor("", 0.2),
                 borderColor: getRGBAColor("", 1),
                 borderWidth: 1
             };
-
-            options.data = dataset.data.sort(sortByX);
-            options.label = dataset.id;
 
             if (dataset.id in _labels) {
                 options.label = _labels[dataset.id];
@@ -94,31 +95,21 @@ module.exports = (function() {
             return data;
         };
         wrapper.setData = function(_data) {
-            //TODO
-            data = [];
-            Object.keys(_data).forEach(function(key) {
-                var dataset = {
-                    id: key,
-                    data: _data[key]
-                };
-                data.push(dataset);
-            });
+            data = Validator.validateData(_data);
         };
         // LABELS
         wrapper.getLabels = function() {
             return labels;
         };
         wrapper.setLabels = function(_labels) {
-            //TODO
-            labels = _labels;
+            labels = Validator.validateLabels(_labels);
         };
         // COLORS
         wrapper.getColors = function() {
             return colors;
         };
         wrapper.setColors = function(_colors) {
-            //TODO
-            colors = _colors;
+            colors = Validator.validateColors(_colors);
         };
         return wrapper;
     };

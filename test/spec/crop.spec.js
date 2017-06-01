@@ -8,17 +8,23 @@ describe("Crop:", function() {
             expect(Crop).toBeDefined();
         });
 
-        it("Can create new instance with args (id, options)", function() {
+        it("Create new instance with default args", function() {
             var c = new Crop("id", {});
             expect(c).toBeDefined();
         });
 
-        xit("Set honeycomb url", function() {
-            expect(false).toBe(true);
+        xit("Create new instance with custom honeycomb", function() {
+            var c = new Crop("id", {
+                honeycomb: "custom"
+            });
+            expect(c).toBeDefined();
         });
 
-        xit("Set apikey", function() {
-            expect(false).toBe(true);
+        xit("Create new instance with apikey", function() {
+            var c = new Crop("id", {
+                apikey: "key"
+            });
+            expect(c).toBeDefined();
         });
     });
 
