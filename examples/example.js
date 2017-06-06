@@ -9,13 +9,13 @@ var initTransferRate = function(chart, data) {
         if ("tcpUpload" in record && "duration" in record.tcpUpload) {
             upload.push({
                 x: record.tcpUpload.timestamp,
-                y: record.tcpUpload.duration
+                y: record.tcpUpload.speed
             });
         }
         if ("tcpDownload" in record && "duration" in record.tcpDownload) {
             download.push({
                 x: record.tcpDownload.timestamp,
-                y: record.tcpDownload.duration
+                y: record.tcpDownload.speed
             });
         }
     }

@@ -9,6 +9,7 @@ describe("Validator:", function() {
     });
 
     describe("Data:", function() {
+        // {dataSetId: [{x:value, y:value}, ...]}
         it("Single list", function() {
             let datasets = Data.datasets.list;
             let validated = Validator.validateData(datasets);
@@ -23,9 +24,16 @@ describe("Validator:", function() {
                 expect(setId).toBeDefined();
                 expect(setData).toEqual(jasmine.any(Array));
                 expect(setData.length).toEqual(datasets[setId].length);
+                for (let j = 0; j < validated[i].data.length; j++) {
+                    expect(validated[i].data[j].x).toBeDefined();
+                    expect(validated[i].data[j].y).toBeDefined();
+                }
             }
         });
 
+        // {dataSetId1: [{x:value, y:value}, ...],
+        //  dataSetId2: [{x:value, y:value}, ...],
+        //  ...}
         it("Multiple lists", function() {
             let datasets = Data.datasets.multipleLists;
             let validated = Validator.validateData(datasets);
@@ -40,9 +48,14 @@ describe("Validator:", function() {
                 expect(setId).toBeDefined();
                 expect(setData).toEqual(jasmine.any(Array));
                 expect(setData.length).toEqual(datasets[setId].length);
+                for (let j = 0; j < validated[i].data.length; j++) {
+                    expect(validated[i].data[j].x).toBeDefined();
+                    expect(validated[i].data[j].y).toBeDefined();
+                }
             }
         });
 
+        // {dataSetId: {xValue:yValue, ...}}
         it("Single map", function() {
             let datasets = Data.datasets.map;
             let validated = Validator.validateData(datasets);
@@ -57,9 +70,16 @@ describe("Validator:", function() {
                 expect(setId).toBeDefined();
                 expect(setData).toEqual(jasmine.any(Array));
                 expect(setData.length).toEqual(Object.keys(datasets[setId]).length);
+                for (let j = 0; j < validated[i].data.length; j++) {
+                    expect(validated[i].data[j].x).toBeDefined();
+                    expect(validated[i].data[j].y).toBeDefined();
+                }
             }
         });
 
+        // {dataSetId1: {xValue:yValue, ...},
+        //  dataSetId2: {xValue:yValue, ...},
+        //  ...}
         it("Multiple maps", function() {
             let datasets = Data.datasets.multipleMaps;
             let validated = Validator.validateData(datasets);
@@ -74,9 +94,16 @@ describe("Validator:", function() {
                 expect(setId).toBeDefined();
                 expect(setData).toEqual(jasmine.any(Array));
                 expect(setData.length).toEqual(Object.keys(datasets[setId]).length);
+                for (let j = 0; j < validated[i].data.length; j++) {
+                    expect(validated[i].data[j].x).toBeDefined();
+                    expect(validated[i].data[j].y).toBeDefined();
+                }
             }
         });
 
+        // {dataSetId1: {xValue:yValue, ...},
+        //  dataSetId2: [{x:value, y:value}, ...],
+        //  ...}
         it("Mix lists and maps", function() {
             let datasets = Data.datasets.mixListMap;
             let validated = Validator.validateData(datasets);
@@ -95,32 +122,29 @@ describe("Validator:", function() {
                 } else {
                     expect(setData.length).toEqual(Object.keys(datasets[setId]).length);
                 }
+                for (let j = 0; j < validated[i].data.length; j++) {
+                    expect(validated[i].data[j].x).toBeDefined();
+                    expect(validated[i].data[j].y).toBeDefined();
+                }
             }
         });
 
-        it("Wrong format 1", function() {
+        it("Invalid format", function() {
             expect(() => {
-                Validator.validateData(['wrong format']);
+                Validator.validateData(['wrong format', 1234]);
             }).toThrowError('Invalid data format');
-        });
-        it("Wrong format 2", function() {
             expect(() => {
                 Validator.validateData({
                     data: ['fdsa']
                 });
             }).toThrowError('Invalid data format');
-        });
-        it("Wrong format 3", function() {
             expect(() => {
                 Validator.validateData('wrong format');
             }).toThrowError('Invalid data format');
-        });
-        it("Wrong format 4", function() {
             expect(() => {
                 Validator.validateData(1234);
             }).toThrowError('Invalid data format');
         });
-
     });
 
     xdescribe("Colors:", function() {
@@ -137,17 +161,40 @@ describe("Validator:", function() {
         });
     });
 
-    xdescribe("Labels:", function() {
-        it("Data format {axis: formatter, ...}", function() {
-            expect(false).toBe(true);
+    describe("Labels:", function() {
+        // {xAxis: 'TIME_FORMAT'}
+        it("Axis time formatter", function() {
+            let x = Validator.validateLabels(Data.labels.timeFormatterX);
+            let y = Validator.validateLabels(Data.labels.timeFormatterY);
+            expect(x).toBeDefined();
+            expect(y).toBeDefined();
+            expect(x).toEqual(jasmine.objectContaining(Data.labels.timeFormatterX));
+            expect(y).toEqual(jasmine.objectContaining(Data.labels.timeFormatterY));
         });
 
-        it("Data format {axis: {value:label, ...}, ...}", function() {
-            expect(false).toBe(true);
+        // {xAxis: {xValue:label, ...}}
+        it("By values", function() {
+            let labels = Validator.validateLabels(Data.labels.byValue);
+            expect(labels).toBeDefined();
+            expect(labels).toEqual(jasmine.objectContaining(Data.labels.byValue));
         });
 
-        it("Unkown Format", function() {
-            expect(false).toBe(true);
+        // {xAxis: dataSetLabel}
+        it("Unkown formatter", function() {
+            /* jshint -W083 */
+            for (let config of Data.labels.invalidFormat) {
+                expect(() => {
+                    Validator.validateLabels(config);
+                }).toThrowError('Invalid data format');
+            }
+            /* jshint +W083 */
+        });
+
+        // {dataSetId: dataSetLabel}
+        it("Dataset label", function() {
+            let labels = Validator.validateLabels(Data.labels.datasetLabel);
+            expect(labels).toBeDefined();
+            expect(labels).toEqual(jasmine.objectContaining(Data.labels.datasetLabel));
         });
     });
 });

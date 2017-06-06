@@ -3,8 +3,14 @@
 module.exports = (function() {
     let Validator = {};
 
+    let validFormatters = ['DATE_FORMAT'];
+
     function isNumeric(n) {
         return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+
+    function sortByX(a, b) {
+        return a.x - b.x;
     }
 
     // Formats  {dataSetId: [{x:value, y:value}], ...}
@@ -28,7 +34,7 @@ module.exports = (function() {
                 }
                 validatedDatasets.push({
                     id: key,
-                    data: dataset
+                    data: dataset.sort(sortByX)
                 });
             } else {
                 let _dataset = [];
@@ -49,17 +55,44 @@ module.exports = (function() {
 
                 validatedDatasets.push({
                     id: key,
-                    data: _dataset
+                    data: _dataset.sort(sortByX)
                 });
             }
         });
+
         return validatedDatasets;
     };
 
     Validator.validateLabels = function(labels) {
         let validatedLabels = {};
-        return labels;
-        // return validatedLabels;
+
+        if (typeof(labels) != 'object') {
+            throw new Error('Invalid data format');
+        }
+
+        for (let key in labels) {
+            if (key == 'xAxis') {
+                if ((typeof(labels.xAxis) == 'string' && validFormatters.includes(labels.xAxis)) ||
+                    (typeof(labels.xAxis) == 'object')) {
+                    validatedLabels.xAxis = labels.xAxis;
+                } else {
+                    throw new Error('Invalid data format');
+                }
+            } else if (key == 'yAxis') {
+                if ((typeof(labels.yAxis) == 'string' && validFormatters.includes(labels.yAxis)) ||
+                    (typeof(labels.yAxis) == 'object')) {
+                    validatedLabels.yAxis = labels.yAxis;
+                } else {
+                    throw new Error('Invalid data format');
+                }
+            } else if (typeof(labels[key]) == 'string') {
+                validatedLabels[key] = labels[key];
+            } else {
+                throw new Error('Invalid data format');
+            }
+        }
+
+        return validatedLabels;
     };
 
     Validator.validateColors = function(colors) {

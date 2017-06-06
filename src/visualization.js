@@ -36,17 +36,81 @@ module.exports = (function() {
     };
 
     var getChartConfig = function(_type, _datasets, _colors, _labels) {
-        var datasets = [];
-        for (var i = 0; i < _datasets.length; i++) {
-            var dataset = _datasets[i];
+        let ret = {
+            type: _type,
+            data: {},
+            options: {
+                scales: {
+                    xAxes: [{
+                        type: 'linear'
+                    }],
+                    yAxes: [{
+                        type: 'linear'
+                    }]
+                }
+            }
+        };
 
-            var options = {
-                data: dataset.data.sort(sortByX),
+        let xValues;
+
+        if ('xAxis' in _labels) {
+            if (_labels.xAxis == 'DATE_FORMAT') {
+                ret.options.scales.xAxes = [{
+                    type: 'time',
+                    position: 'bottom'
+                }];
+            }
+            if (typeof(_labels.xAxis) == 'object') {
+                let labels = [];
+                let xSet = new Set();
+                for (let i = 0; i < _datasets.length; i++) {
+                    let dataset = _datasets[i].data;
+                    for (let j = 0; j < dataset.length; j++) {
+                        xSet.add(dataset[j].x);
+                    }
+                }
+
+                xValues = Array.from(xSet).sort();
+
+                for (let item of xValues) {
+                    let label = _labels.xAxis[item];
+                    labels.push(label ? label : item);
+                }
+
+                ret.data.labels = labels;
+                ret.options.scales.xAxes = undefined;
+            }
+        }
+
+        let datasets = [];
+
+        for (let i = 0; i < _datasets.length; i++) {
+            let dataset = _datasets[i];
+            let data = _datasets[i].data.sort(sortByX);
+
+            let options = {
                 label: dataset.id,
                 backgroundColor: getRGBAColor("", 0.2),
                 borderColor: getRGBAColor("", 1),
                 borderWidth: 1
             };
+
+            if (xValues) {
+                let dataByLabel = [];
+                let index = 0;
+                for (let j = 0; j < xValues.length; j++) {
+                    if (index < data.length && data[index].x == xValues[j]) {
+                        dataByLabel.push(data[index].y);
+                        index++;
+                    } else {
+                        dataByLabel.push(null);
+                    }
+                }
+                options.data = dataByLabel;
+                options.spanGaps = true;
+            } else {
+                options.data = data;
+            }
 
             if (dataset.id in _labels) {
                 options.label = _labels[dataset.id];
@@ -60,27 +124,8 @@ module.exports = (function() {
             datasets.push(options);
         }
 
-        var ret = {
-            type: _type,
-            data: {
-                datasets: datasets
-            }
-        };
-
-        if ('xAxis' in _labels) {
-            if (_labels.xAxis == 'DATE_FORMAT') {
-                Object.assign(ret, {
-                    options: {
-                        scales: {
-                            xAxes: [{
-                                type: 'time',
-                                position: 'bottom'
-                            }]
-                        }
-                    }
-                });
-            }
-        }
+        ret.data.datasets = datasets;
+        ret.options.showLines = true;
 
         return ret;
     };

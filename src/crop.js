@@ -5,9 +5,7 @@ module.exports = (function() {
     function Crop(id, options) {
         this.id = id;
         this.settings = {
-            honeycomb: "https://honeycomb.apisense.io/",
-            accessKey: "",
-            filter: ""
+            honeycomb: "https://honeycomb.apisense.io/"
         };
         this.cropData = [];
 
@@ -25,9 +23,12 @@ module.exports = (function() {
         return this;
     }
 
-    var getCropData = function(url, callback) {
+    var getCropData = function(url, accessKey, callback) {
         var xhr = new XMLHttpRequest();
         xhr.open("GET", url, true);
+        if (accessKey) {
+            xhr.setRequestHeader('Authorization', 'accessKey ' + accessKey);
+        }
         xhr.onload = function(e) {
             if (xhr.status === 200) {
                 var data = JSON.parse(xhr.responseText);
@@ -42,28 +43,28 @@ module.exports = (function() {
 
     Crop.prototype = {
         getDataUrl: function() {
-            if (this.settings.filter === "") {
-                return this.settings.honeycomb + "api/v1/crop/" + this.id + "/data";
-            } else {
+            if (this.settings.filter) {
                 return this.settings.honeycomb + "api/v1/crop/" + this.id + "/data/" + this.settings.filter;
+            } else {
+                return this.settings.honeycomb + "api/v1/crop/" + this.id + "/data";
             }
         },
         getRecords: function(callback) {
             var crop = this;
             return new Promise((resolve, reject) => {
                 if (crop.cropData.length === 0) {
-                    return getCropData(crop.getDataUrl(), (data) => {
-                        if (this.settings.filter === "") {
-                            //if raw data then extract records
+                    return getCropData(crop.getDataUrl(), crop.settings.accessKey, (data) => {
+                        if (this.settings.filter) {
+                            //if filter: return data
+                            crop.cropData = data;
+                        } else {
+                            //else: raw data => extract records
                             for (var i = 0; i < data.length; i++) {
                                 var body = data[i].body;
                                 for (var k = 0; k < body.length; k++) {
                                     crop.cropData.push(body[k]);
                                 }
                             }
-                        } else {
-                            //else return filtered data
-                            crop.cropData = data;
                         }
                         resolve(crop.cropData);
                     });

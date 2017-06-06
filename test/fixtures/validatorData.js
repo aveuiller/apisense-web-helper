@@ -50,7 +50,46 @@ module.exports = (() => {
         }
     };
 
+    let labels = {
+        timeFormatterX: {
+            'xAxis': 'DATE_FORMAT'
+        },
+        timeFormatterY: {
+            'yAxis': 'DATE_FORMAT'
+        },
+        invalidFormat: [
+            'error',
+            1234,
+            true,
+            {
+                'xAxis': 'error'
+            }, {
+                'xAxis': 1234
+            }, {
+                'xAxis': true
+            }
+        ],
+        byValue: {
+            'xAxis': {
+                1: 'a',
+                2: 'b',
+                3: 'c',
+                4: 'd'
+            }
+        },
+        datasetLabel: {
+            dataSet1: 'dataSetLabel1'
+        }
+    };
+
+    let colors = {
+        hex: '#AAAAAA',
+        rgba: '',
+        invalid: 'asdf'
+    };
+
     return {
+        labels: labels,
         datasets: datasets
     };
 })();
