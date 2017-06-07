@@ -1,4 +1,4 @@
-var crop = new Apisense.Crop("kQB5ODNeqYt9w5P6BWjB", {});
+var crop = new Apisense.Crop("kQB5ODNeqYt9w5P6BWjB");
 
 var initTransferRate = function(chart, data) {
     var upload = [];
@@ -26,6 +26,8 @@ var initTransferRate = function(chart, data) {
     });
     chart.setLabels({
         'xAxis': 'DATE_FORMAT',
+        'upload': 'Upload speed',
+        'download': 'Download speed'
     });
     chart.setColors({
         'upload': '#2196F3',

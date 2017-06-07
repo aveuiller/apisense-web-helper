@@ -2,7 +2,7 @@
 
 module.exports = (function() {
 
-    function Crop(id, options) {
+    function Crop(id, options = {}) {
         this.id = id;
         this.settings = {
             honeycomb: "https://honeycomb.apisense.io/"
