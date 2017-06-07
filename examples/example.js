@@ -33,7 +33,7 @@ var initTransferRate = function(chart, data) {
     });
 };
 
-var lineChartPromise = Apisense.Visualization.addLineChart($('#testLineChart'), crop, 'Transfer Rate', initTransferRate);
+var lineChartPromise = Apisense.Visualization.addLineChart($('#testLineChart'), crop, 'Average transfer rates', initTransferRate);
 
 lineChartPromise.then(function(chart) {
     console.log("Line Chart ready", chart);

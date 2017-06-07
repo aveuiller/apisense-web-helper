@@ -35,7 +35,7 @@ module.exports = (function() {
         return 'rgba(' + pHex.r + ',' + pHex.g + ',' + pHex.b + ',' + a + ')';
     };
 
-    var getChartConfig = function(_type, _datasets, _colors, _labels) {
+    var getChartConfig = function(_type, _datasets, _colors, _labels, title) {
         let ret = {
             type: _type,
             data: {},
@@ -50,6 +50,13 @@ module.exports = (function() {
                 }
             }
         };
+
+        if (title) {
+            ret.options.title = {
+                display: true,
+                text: title
+            };
+        }
 
         let xValues;
 
@@ -169,7 +176,7 @@ module.exports = (function() {
             crop.getRecords().then(function(cropData) {
                 var wrapper = ChartWrapper();
                 initCallback(wrapper, cropData);
-                var config = getChartConfig(type, wrapper.getData(), wrapper.getColors(), wrapper.getLabels());
+                var config = getChartConfig(type, wrapper.getData(), wrapper.getColors(), wrapper.getLabels(), title);
                 resolve(visMod._newChart(ctx, config));
             });
         });
