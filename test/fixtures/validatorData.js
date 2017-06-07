@@ -83,13 +83,89 @@ module.exports = (() => {
     };
 
     let colors = {
-        hex: '#AAAAAA',
-        rgba: '',
-        invalid: 'asdf'
+        valid: [{
+                datasetId: '#aabbcc'
+            },
+            {
+                datasetId: '#ffffff'
+            },
+            {
+                datasetId: 'aabbcc'
+            },
+            {
+                datasetId: 'ffffff'
+            },
+            {
+                datasetId: '#AABBCC'
+            },
+            {
+                datasetId: '#FFFFFF'
+            },
+            {
+                datasetId: '#FFF'
+            },
+            {
+                datasetId: '#fff'
+            },
+            {
+                datasetId: 'FFF'
+            },
+            {
+                datasetId: 'fff'
+            },
+            {
+                datasetId: 'AABBCC'
+            },
+            {
+                datasetId: 'FFFFFF'
+            },
+            {
+                datasetId: '#000000',
+                datasetId2: '#ffffff'
+            },
+            {
+                datasetId: '000000',
+                datasetId2: 'ffffff'
+            },
+            {
+                datasetId: '#000000',
+                datasetId2: 'ffffff'
+            },
+            {
+                datasetId: '#012def'
+            },
+            {
+                datasetId: '012def'
+            },
+            {
+                datasetId: '#012def00'
+            },
+            {
+                datasetId: '012defff'
+            }
+        ],
+        invalid: [
+            '012defff',
+            true,
+            12345,
+            {
+                datasetId: '#JKLLKJ'
+            },
+            {
+                datasetId: 'blue'
+            },
+            {
+                datasetId: {}
+            },
+            {
+                datasetId: 43122
+            }
+        ]
     };
 
     return {
         labels: labels,
+        colors: colors,
         datasets: datasets
     };
 })();

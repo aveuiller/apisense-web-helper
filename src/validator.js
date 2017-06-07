@@ -96,9 +96,23 @@ module.exports = (function() {
     };
 
     Validator.validateColors = function(colors) {
+        let colorPattern = /(^#?[0-9A-F]{6}$)|(^#?[0-9A-F]{8}$)|(^#?[0-9A-F]{3}$)/i;
         let validatedColors = {};
-        return colors;
-        // return validatedColors;
+
+        if (typeof(colors) != 'object') {
+            throw new Error('Invalid data format');
+        }
+
+        for (let key in colors) {
+            let datasetColor = colors[key];
+            if (typeof(datasetColor) == 'string' && colorPattern.test(datasetColor)) {
+                validatedColors[key] = datasetColor;
+            } else {
+                throw new Error('Invalid data format');
+            }
+        }
+
+        return validatedColors;
     };
 
     return Validator;

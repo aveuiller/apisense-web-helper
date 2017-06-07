@@ -147,17 +147,24 @@ describe("Validator:", function() {
         });
     });
 
-    xdescribe("Colors:", function() {
-        it("Data format {dataSetId: color, ...}", function() {
-            expect(false).toBe(true);
-        });
-
-        it("Data format {dataSetId: {xValue:color, ...}, ...}", function() {
-            expect(false).toBe(true);
+    describe("Colors:", function() {
+        // {datasetId: '#color'}
+        it("By dataset", function() {
+            for (let config of Data.colors.valid) {
+                let colors = Validator.validateColors(config);
+                expect(colors).toBeDefined();
+                expect(colors).toEqual(jasmine.objectContaining(config));
+            }
         });
 
         it("Unkown Format", function() {
-            expect(false).toBe(true);
+            /* jshint -W083 */
+            for (let config of Data.colors.invalid) {
+                expect(() => {
+                    Validator.validateColors(config);
+                }).toThrowError('Invalid data format');
+            }
+            /* jshint +W083 */
         });
     });
 
