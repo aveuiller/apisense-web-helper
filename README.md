@@ -94,6 +94,7 @@ var initCallback = function(chart, data) {
     // Set dataset colors
     // Valid format
     //      {datasetId: <hex color code>, ...}
+    //      {datasetId: {xValue:<hex color code>}, ...}
     chart.setColors({
         dataset1: '#2196F3',
         dataset2: '7CB342'
@@ -109,3 +110,6 @@ lineChartPromise.then(function(chart) {
 });
 </script>
 ```
+
+The chart can be updated after creation, by modifying the chart object returned by the promise
+For more info on updating the chart see the [Chart.js documentation](http://www.chartjs.org/docs/latest/developers/updates.html)
