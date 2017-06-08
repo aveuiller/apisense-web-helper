@@ -40,7 +40,16 @@ The `apisense.bundle.js` and `apisense.bundle.min.js` builds include Chart.js an
 <script>
 var ctx = document.getElementById("myChart").getContext('2d');
 
-var crop = new Apisense.Crop("cropId");
+//Optional settings for a new Crop
+var cropSettings = {
+    // use accessKey to retrieve private data
+    accessKey: 'myAccessKey',
+    // set url to private honeycomb server
+    honeycomb: 'private.honeycomb',
+    // use crop filter to retrieve data
+    filter: 'myFilter'
+}
+var crop = new Apisense.Crop("cropId", cropSettings);
 
 var title = 'Chart title';
 
@@ -53,6 +62,11 @@ var initCallback = function(chart, data) {
 
     for (var i = 0; i < data.length; i++) {
         var record = data[i];
+        if (someCondition) {
+            dataset1.push(record);
+        } else {
+            dataset2.push(record);
+        }
     }
 
     // setData(data)
@@ -93,6 +107,5 @@ var lineChartPromise = Apisense.Visualization.addLineChart(ctx, crop, title, ini
 lineChartPromise.then(function(chart) {
     // chart will be a Chart.js object
 });
-
 </script>
 ```
