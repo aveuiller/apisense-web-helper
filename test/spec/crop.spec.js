@@ -8,23 +8,44 @@ describe("Crop:", function() {
             expect(Crop).toBeDefined();
         });
 
-        it("Create new instance with default args", function() {
-            var c = new Crop("id", {});
+        it("Default args", function() {
+            let cropId = 'testCropId';
+            let defaultHoneycomb = 'https://honeycomb.apisense.io/';
+            let c = new Crop(cropId);
+
             expect(c).toBeDefined();
+            expect(c.getDataUrl()).toContain(defaultHoneycomb);
+            expect(c.getDataUrl()).toContain(cropId);
+            expect(c.settings.accessKey).toBeUndefined();
+            expect(c.settings.filter).toBeUndefined();
         });
 
-        xit("Create new instance with custom honeycomb", function() {
-            var c = new Crop("id", {
-                honeycomb: "custom"
+        it("Custom honeycomb", function() {
+            let customHoneycomb = 'http://custom.honeycomb/';
+            let c = new Crop('testCropId', {
+                honeycomb: customHoneycomb
             });
-            expect(c).toBeDefined();
+
+            expect(c.getDataUrl()).toContain(customHoneycomb);
         });
 
-        xit("Create new instance with apikey", function() {
-            var c = new Crop("id", {
-                apikey: "key"
+        it("Data filter", function() {
+            let filter = 'testFilter';
+            let c = new Crop('testCropId', {
+                filter: filter
             });
-            expect(c).toBeDefined();
+
+            expect(c.settings.filter).toBeDefined();
+            expect(c.getDataUrl()).toContain(filter);
+        });
+
+        it("AccessKey", function() {
+            let accessKey = 'kgnbphkmfpknc1094u1rdwc';
+            let c = new Crop('testCropId', {
+                accessKey: accessKey
+            });
+            expect(c.settings.accessKey).toBeDefined();
+            expect(c.settings.accessKey).toEqual(accessKey);
         });
     });
 
@@ -49,17 +70,49 @@ describe("Crop:", function() {
 
         beforeEach(function() {
             jasmine.Ajax.install();
-            this.crop = new Crop("crop", {});
         });
 
         afterEach(function() {
             jasmine.Ajax.uninstall();
         });
 
-        it("getRecords: returns a list of records", function(done) {
+        it("getRecords: accessKey", function() {
+            let accessKey = 'kgnbphkmfpknc1094u1rdwc';
+            let c = new Crop('testCropId', {
+                accessKey: accessKey
+            });
+
             //Request records
-            this.crop.getRecords().then(function(data) {
+            c.getRecords();
+
+            //Check for Authorization header
+            let headers = jasmine.Ajax.requests.mostRecent().requestHeaders;
+
+            expect(headers.Authorization).toBeDefined();
+            expect(headers.Authorization).toEqual('accessKey ' + accessKey);
+        });
+
+        it("getRecords: returns only the list of records", function(done) {
+            let crop = new Crop("crop");
+
+            //Request records
+            crop.getRecords().then(function(data) {
                 expect(data).toEqual(records);
+                done();
+            });
+
+            //Respond with mock response
+            jasmine.Ajax.requests.mostRecent().respondWith(mockDataResponse);
+        });
+
+        it("getRecords with filter: returns full json response", function(done) {
+            let crop = new Crop("crop", {
+                filter: 'customFilter'
+            });
+
+            //Request records
+            crop.getRecords().then(function(data) {
+                expect(data).toEqual(mockData);
                 done();
             });
 
