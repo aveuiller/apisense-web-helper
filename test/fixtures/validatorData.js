@@ -142,6 +142,15 @@ module.exports = (() => {
             },
             {
                 datasetId: '012defff'
+            },
+            {
+                datasetId: {
+                    1: '#2196F3',
+                    2: '#7CB342',
+                    3: '#7CB342',
+                    4: '#2196F3',
+                    5: '#7CB342'
+                }
             }
         ],
         invalid: [
@@ -153,9 +162,6 @@ module.exports = (() => {
             },
             {
                 datasetId: 'blue'
-            },
-            {
-                datasetId: {}
             },
             {
                 datasetId: 43122

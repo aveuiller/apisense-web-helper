@@ -107,6 +107,15 @@ module.exports = (function() {
             let datasetColor = colors[key];
             if (typeof(datasetColor) == 'string' && colorPattern.test(datasetColor)) {
                 validatedColors[key] = datasetColor;
+            } else if (typeof(datasetColor) == 'object') {
+                validatedColors[key] = {};
+                for (let value in datasetColor) {
+                    if (colorPattern.test(datasetColor[value])) {
+                        validatedColors[key][value] = datasetColor[value];
+                    } else {
+                        throw new Error('Invalid data format');
+                    }
+                }
             } else {
                 throw new Error('Invalid data format');
             }

@@ -20,8 +20,9 @@ module.exports = (function() {
     var defaultR = '176';
     var defaultG = '190';
     var defaultB = '197';
+    var defaultOpacity = 0.3;
 
-    var getRGBAColor = function(hex, a) {
+    var getRGBAColor = function(hex, a = defaultOpacity) {
         var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
         var pHex = result ? {
             r: parseInt(result[1], 16),
@@ -39,17 +40,19 @@ module.exports = (function() {
         let ret = {
             type: _type,
             data: {},
-            options: {
-                scales: {
-                    xAxes: [{
-                        type: 'linear'
-                    }],
-                    yAxes: [{
-                        type: 'linear'
-                    }]
-                }
-            }
+            options: {}
         };
+
+        if (_type == 'line' || _type == 'bar') {
+            ret.options.scales = {
+                xAxes: [{
+                    type: 'linear'
+                }],
+                yAxes: [{
+                    type: 'linear'
+                }]
+            };
+        }
 
         if (title) {
             ret.options.title = {
@@ -62,10 +65,7 @@ module.exports = (function() {
 
         if ('xAxis' in _labels) {
             if (_labels.xAxis == 'DATE_FORMAT') {
-                ret.options.scales.xAxes = [{
-                    type: 'time',
-                    position: 'bottom'
-                }];
+                ret.options.scales.xAxes[0].type = 'time';
             }
             if (typeof(_labels.xAxis) == 'object') {
                 let labels = [];
@@ -85,8 +85,22 @@ module.exports = (function() {
                 }
 
                 ret.data.labels = labels;
-                ret.options.scales.xAxes = undefined;
+                if (_type == 'line' || _type == 'bar') {
+                    ret.options.scales.xAxes = undefined;
+                }
             }
+        } else if (_type == 'pie') {
+            let labels = [];
+            let xSet = new Set();
+            for (let i = 0; i < _datasets.length; i++) {
+                let dataset = _datasets[i].data;
+                for (let j = 0; j < dataset.length; j++) {
+                    xSet.add(dataset[j].x);
+                }
+            }
+
+            xValues = Array.from(xSet).sort();
+            ret.data.labels = xValues;
         }
 
         let datasets = [];
@@ -97,7 +111,7 @@ module.exports = (function() {
 
             let options = {
                 label: dataset.id,
-                backgroundColor: getRGBAColor("", 0.2),
+                backgroundColor: getRGBAColor(""),
                 borderColor: getRGBAColor("", 1),
                 borderWidth: 1
             };
@@ -124,8 +138,31 @@ module.exports = (function() {
             }
 
             if (dataset.id in _colors) {
-                options.backgroundColor = getRGBAColor(_colors[dataset.id], 0.2);
-                options.borderColor = getRGBAColor(_colors[dataset.id], 1);
+                if (typeof(_colors[dataset.id]) == 'string') {
+                    options.backgroundColor = getRGBAColor(_colors[dataset.id]);
+                    options.borderColor = getRGBAColor(_colors[dataset.id], 1);
+                }
+                if (typeof(_colors[dataset.id]) == 'object') {
+                    options.backgroundColor = [];
+                    options.borderColor = [];
+                    options.borderWidth = [];
+
+                    if (xValues) {
+                        for (let index in xValues) {
+                            let color = _colors[dataset.id][xValues[index]];
+                            options.backgroundColor.push(getRGBAColor(color));
+                            options.borderColor.push(getRGBAColor(color, 1));
+                            options.borderWidth.push(1);
+                        }
+                    } else {
+                        for (let point in data) {
+                            let color = _colors[dataset.id][point.x];
+                            options.backgroundColor.push(getRGBAColor(color));
+                            options.borderColor.push(getRGBAColor(color, 1));
+                            options.borderWidth.push(1);
+                        }
+                    }
+                }
             }
 
             datasets.push(options);
