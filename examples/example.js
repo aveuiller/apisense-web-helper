@@ -2,7 +2,7 @@ var lineCanvas = document.getElementById("line").getContext('2d');
 var barCanvas = document.getElementById("bar").getContext('2d');
 var pieCanvas = document.getElementById("pie").getContext('2d');
 
-let crop = new Apisense.Crop('kQB5ODNeqYt9w5P6BWjB');
+let crop = new Apisense.Crop('ez81v5w8aoSKYae6ezkJ');
 
 let records = crop.getRecords().then((records) => {
     //datasets
@@ -10,76 +10,49 @@ let records = crop.getRecords().then((records) => {
     let download = [];
     let ping = [];
     let dns = [];
-    let traceroute = [];
     let events = {
         upload: 0,
         download: 0,
         dns: 0,
-        ping: 0,
-        traceroute: 0
+        ping: 0
     };
     let successful = {
         upload: 0,
         download: 0,
         dns: 0,
-        ping: 0,
-        traceroute: 0
+        ping: 0
     };
 
     for (let record of records) {
-        if ('tcpUpload' in record) {
-            events.upload++;
-            if ('speed' in record.tcpUpload) {
-                upload.push({
-                    x: record.tcpUpload.timestamp,
-                    y: record.tcpUpload.speed
-                });
-                successful.upload++;
-            }
+        let success = 0;
+        if (record.success) {
+            success = 1;
         }
-        if ('tcpDownload' in record) {
-            events.download++;
-            if ('speed' in record.tcpDownload) {
-                download.push({
-                    x: record.tcpDownload.timestamp,
-                    y: record.tcpDownload.speed
-                });
-                successful.download++;
-            }
-        }
-        if ('dns' in record) {
-            events.dns++;
-            if ('duration' in record.dns) {
-                dns.push({
-                    x: record.dns.timestamp,
-                    y: record.dns.duration
-                });
-                successful.dns++;
-            }
-        }
-        if ('ping' in record) {
-            events.ping++;
-            if ('duration' in record.ping) {
-                ping.push({
-                    x: record.ping.timestamp,
-                    y: record.ping.duration
-                });
-                successful.ping++;
-            }
-        }
-        if ('traceroute' in record) {
-            events.traceroute++;
-            if ('duration' in record.traceroute) {
-                traceroute.push({
-                    x: record.traceroute.timestamp,
-                    y: record.traceroute.duration
-                });
-                successful.traceroute++;
-            }
+        switch (record.type) {
+            case 'upload':
+                events.upload++;
+                upload.push(record);
+                successful.upload += success;
+                break;
+            case 'download':
+                events.download++;
+                download.push(record);
+                successful.download += success;
+                break;
+            case 'dns':
+                events.dns++;
+                dns.push(record);
+                successful.dns += success;
+                break;
+            case 'ping':
+                events.ping++;
+                ping.push(record);
+                successful.ping += success;
+                break;
         }
     }
 
-    let linePromise = Apisense.Visualization.addLineChart(lineCanvas, crop, 'Line: Average transfer rates', (chart, data) => {
+    let linePromise = Apisense.Visualization.addLineChart(lineCanvas, crop, 'Average transfer rates', (chart, data) => {
         // data and records are the same object
         // data === records
         chart.setData({
@@ -101,21 +74,19 @@ let records = crop.getRecords().then((records) => {
         console.log('Line Chart ready');
     });
 
-    let barPromise = Apisense.Visualization.addBarChart(barCanvas, crop, 'Bar: Events', (chart, data) => {
+    let barPromise = Apisense.Visualization.addBarChart(barCanvas, crop, 'Test executed by type', (chart, data) => {
         chart.setData({
             total: {
                 1: events.upload,
                 2: events.download,
                 3: events.dns,
-                4: events.ping,
-                5: events.traceroute
+                4: events.ping
             },
             successful: {
                 1: successful.upload,
                 2: successful.download,
                 3: successful.dns,
-                4: successful.ping,
-                5: successful.traceroute
+                4: successful.ping
             }
         });
         chart.setLabels({
@@ -123,8 +94,7 @@ let records = crop.getRecords().then((records) => {
                 1: 'Upload',
                 2: 'Download',
                 3: 'DNS',
-                4: 'Ping',
-                5: 'Traceroute'
+                4: 'Ping'
             },
             total: 'Total',
             successful: 'Successful'
@@ -141,32 +111,33 @@ let records = crop.getRecords().then((records) => {
         console.log('Bar Chart ready');
     });
 
-    let piePromise = Apisense.Visualization.addPieChart(pieCanvas, crop, 'Pie: Events', (chart, data) => {
+    let piePromise = Apisense.Visualization.addPieChart(pieCanvas, crop, 'Tests executed', (chart, data) => {
+        let success = successful.upload +
+            successful.download +
+            successful.dns +
+            successful.ping;
+
+        let total = events.upload +
+            events.download +
+            events.dns +
+            events.ping;
+
         chart.setData({
-            successful: {
-                1: successful.upload,
-                2: successful.download,
-                3: successful.dns,
-                4: successful.ping,
-                5: successful.traceroute
+            tests: {
+                1: success,
+                2: total - success
             }
         });
         chart.setLabels({
             xAxis: {
-                1: 'Upload',
-                2: 'Download',
-                3: 'DNS',
-                4: 'Ping',
-                5: 'Traceroute'
+                1: 'Successfuly',
+                2: 'Failed'
             }
         });
         chart.setColors({
-            successful: {
-                1: '#FFEE58',
-                2: '#81C784',
-                3: '#4FC3F7',
-                4: '#7986CB',
-                5: '#BA68C8'
+            tests: {
+                1: '#4FC3F7',
+                2: '#7986CB'
             }
         });
     });
