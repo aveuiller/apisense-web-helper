@@ -29,9 +29,48 @@ npm run-script gulp build
 
 This command will generate four files in the build folder.
 
-The `apisense.js` and `apisense.min.js` files contains the library. If this version is used, the Chart.js library will need to be included before apisense.js
+##### Standalone Build
 
-The `apisense.bundle.js` and `apisense.bundle.min.js` builds include Chart.js and [Moment.js](http://momentjs.com/) (required by Chart.js for time format) in a single file.
+The `apisense.js` and `apisense.min.js` files contains the library code. If this version is used, the Chart.js library will need to be included before apisense.js. If using time format you will also have to inlcude [Moment.js](http://momentjs.com/) required by Chart.js
+
+##### Bundled Build
+
+The `apisense.bundle.js` and `apisense.bundle.min.js` builds include Chart.js and Moment.js in a single file.
+
+## Integration
+
+The APISENSE Web Helper can be integrated with different module loaders.
+
+##### Script Tag
+
+```html
+<script src="path/to/build/apisense.js"></script>
+<script>
+    var crop = new Apisense.Crop("cropId", cropSettings);
+</script>
+```
+
+##### CommonJS
+
+```javascript
+var Apisense = require('apisense.js');
+var crop = new Apisense.Crop("cropId", cropSettings);
+```
+
+##### AMD
+
+```javascript
+define(['path/to/build/apisense.js'], function(Apisense) {
+  var crop = new Apisense.Crop("cropId", cropSettings);
+});
+```
+
+##### ES6 Modules
+
+```javascript
+import Apisense from 'apisense.js';
+var crop = new Apisense.Crop("cropId", cropSettings);
+```
 
 ## Usage
 
@@ -112,4 +151,5 @@ lineChartPromise.then(function(chart) {
 ```
 
 The chart can be updated after creation, by modifying the chart object returned by the promise
+
 For more info on updating the chart see the [Chart.js documentation](http://www.chartjs.org/docs/latest/developers/updates.html)
