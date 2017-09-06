@@ -38,7 +38,7 @@ module.exports = (function() {
                 });
             } else {
                 let _dataset = [];
-                let keys = Object.keys(dataset);
+                let keys = Object.keys(dataset); // return array of string
 
                 for (let i = 0; i < keys.length; i++) {
                     let x = keys[i];
@@ -48,7 +48,7 @@ module.exports = (function() {
                         throw new Error('Invalid data format');
                     }
                     _dataset.push({
-                        x: x,
+                        x: parseInt(x),
                         y: y
                     });
                 }

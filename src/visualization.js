@@ -77,7 +77,7 @@ module.exports = (function() {
                     }
                 }
 
-                xValues = Array.from(xSet).sort();
+                xValues = Array.from(xSet).sort(function (a,b) { return a - b; });
 
                 for (let item of xValues) {
                     let label = _labels.xAxis[item];
@@ -117,6 +117,7 @@ module.exports = (function() {
             };
 
             if (xValues) {
+                xValues.sort(function (a,b) { return a - b; });
                 let dataByLabel = [];
                 let index = 0;
                 for (let j = 0; j < xValues.length; j++) {
